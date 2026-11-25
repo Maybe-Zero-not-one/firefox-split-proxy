@@ -4,6 +4,8 @@ Firefox 扩展。规则内的站点走本地 Clash，其余保持直连。**只�
 
 仓库：<https://github.com/Maybe-Zero-not-one/firefox-split-proxy>（MIT）
 
+**下载**：到 [Releases](https://github.com/Maybe-Zero-not-one/firefox-split-proxy/releases/latest) 取 `split-proxy-1.0.0.xpi`，安装方式见那页说明。
+
 ```
                     ┌─ 规则内（github.com …）→ 127.0.0.1:7897 (Clash) → 出口 211.20.x.x
 Firefox 请求 ───────┤
