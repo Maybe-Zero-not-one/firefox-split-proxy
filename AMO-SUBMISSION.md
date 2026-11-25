@@ -134,7 +134,8 @@ Permissions used, and only these:
 
 Build: none. The submitted package is the exact source in the repo; no transpiling,
 no bundling, no generated files. Source is therefore not required, but it is
-available at <填入你的仓库地址>.
+available at https://github.com/Maybe-Zero-not-one/firefox-split-proxy
+(public repository; the submitted package is byte-identical to src/ in it).
 ```
 
 ## 上传前检查清单

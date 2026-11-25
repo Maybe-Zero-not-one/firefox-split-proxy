@@ -2,6 +2,8 @@
 
 Firefox 扩展。规则内的站点走本地 Clash，其余保持直连。**只影响 Firefox，不动系统代理，也不影响其它浏览器和程序。**
 
+仓库：<https://github.com/Maybe-Zero-not-one/firefox-split-proxy>（MIT）
+
 ```
                     ┌─ 规则内（github.com …）→ 127.0.0.1:7897 (Clash) → 出口 211.20.x.x
 Firefox 请求 ───────┤
