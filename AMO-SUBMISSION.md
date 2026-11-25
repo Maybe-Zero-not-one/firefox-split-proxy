@@ -138,6 +138,27 @@ available at https://github.com/Maybe-Zero-not-one/firefox-split-proxy
 (public repository; the submitted package is byte-identical to src/ in it).
 ```
 
+## Source code submission（如果表单那步选了「是」）
+
+严格按 AMO 那页的判定标准（"代码生成或压缩工具 / webpack 等合并工具 / Web 模板引擎 /
+任何二次处理"），本扩展**都没用过**，正确答案是**选「否」**：
+
+- 提交的 `.xpi` 里 8 个文件与仓库 `src/` 的 8 个文件 **SHA-256 逐一相同**
+- 没有转译、没有拼接、没有压缩、没有代码生成
+
+如果已经选了「是」并把上传框展开了，就传这个文件：
+
+```
+dist/split-proxy-1.0.0-source.zip    36.3 KB
+```
+
+它包含 `src/`（8 个源文件）+ `test/`（4 个脚本）+ `BUILD.md` + `README.md` + `LICENSE` +
+`AMO-SUBMISSION.md`。审核员解压后跑 `node test/build.mjs` 即可复现出提交的 xpi ——
+**产出的 xpi 与提交包 SHA-256 完全相同**（`8437A69B…FBAC6A`）。
+
+构建环境与步骤见包内 `BUILD.md`。
+
+
 ## 上传前检查清单
 
 ```powershell
@@ -153,3 +174,5 @@ node test/build.mjs           # 产出 dist/split-proxy-1.0.0.xpi
 - [ ] 隐私政策填了（AMO 现在强制）
 - [ ] Notes to Reviewer 里说清了 `<all_urls>` 和联网那一次
 - [ ] 上传 `dist/split-proxy-1.0.0.xpi`
+- [ ] 「需要提交源代码吗」按实际情况选：本扩展**无构建步骤**，应选**否**；
+      若已选「是」，上传 `dist/split-proxy-1.0.0-source.zip`
