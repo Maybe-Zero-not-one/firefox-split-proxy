@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1a1a1a; --dim: #6b7280; --line: #e5e7eb;
+    --accent: #2563eb; --ok: #059669; --bad: #dc2626; --soft: #f3f4f6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#1c1c1e; --fg:#f2f2f7; --dim:#9ca3af; --line:#3a3a3c;
+            --accent:#3b82f6; --ok:#34d399; --bad:#f87171; --soft:#2c2c2e; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    width: 340px; margin: 0; padding: 14px 16px 12px;
+    font: 13px/1.5 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--fg);
+  }
+  .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .title { font-weight: 600; font-size: 14px; }
+  .switch { display: flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; }
+  .switch input { display: none; }
+  .track {
+    width: 38px; height: 22px; border-radius: 11px; background: var(--line);
+    position: relative; transition: background .15s;
+  }
+  .track::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+    border-radius: 50%; background: #fff; transition: transform .15s;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  }
+  .switch input:checked + .track { background: var(--ok); }
+  .switch input:checked + .track::after { transform: translateX(16px); }
+  .state { font-size: 12px; color: var(--dim); }
+  .row {
+    display: flex; justify-content: space-between; gap: 10px;
+    padding: 7px 0; border-top: 1px solid var(--line);
+  }
+  .row:first-of-type { border-top: none; }
+  .k { color: var(--dim); flex: none; }
+  .v { text-align: right; word-break: break-all; }
+  .v.ok { color: var(--ok); } .v.bad { color: var(--bad); }
+  .stats { margin-top: 2px; }
+  .hosts { margin-top: 8px; max-height: 96px; overflow: auto; }
+  .host {
+    font: 11px/1.6 ui-monospace, Consolas, monospace; color: var(--dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .actions { display: flex; gap: 8px; margin-top: 12px; }
+  button {
+    flex: 1; padding: 7px 10px; border-radius: 7px; border: 1px solid var(--line);
+    background: var(--soft); color: var(--fg); font: inherit; font-size: 12px; cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  .hint { margin-top: 9px; font-size: 11px; color: var(--dim); }
+  #result { margin-top: 8px; font: 11px/1.5 ui-monospace, Consolas, monospace;
+            color: var(--dim); word-break: break-all; display: none; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div>
+      <div class="title">分域代理</div>
+      <div class="state" id="stateText">读取中…</div>
+    </div>
+    <label class="switch" title="总开关">
+      <input type="checkbox" id="modeToggle">
+      <span class="track"></span>
+    </label>
+  </div>
+
+  <div class="row">
+    <span class="k">代理</span>
+    <span class="v" id="proxyAddr">—</span>
+  </div>
+  <div class="row">
+    <span class="k">规则</span>
+    <span class="v" id="ruleCount">—</span>
+  </div>
+  <div class="row stats">
+    <span class="k">本次（自打开）</span>
+    <span class="v" id="counts">—</span>
+  </div>
+
+  <div class="hosts" id="hosts"></div>
+
+  <div class="actions">
+    <button class="primary" id="btnTest">测一下出口</button>
+    <button id="btnOptions">规则设置</button>
+  </div>
+  <div id="result"></div>
+  <div class="hint">开关关掉 = 全部直连（等于停用）。规则改动立刻生效，不用重启浏览器。</div>
+
+<script src="popup.js" type="module"></script>
+</body>
+</html>

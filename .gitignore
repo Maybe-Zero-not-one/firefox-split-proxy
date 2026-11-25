@@ -1,0 +1,14 @@
+# 依赖 / 构建产物
+node_modules/
+dist/
+
+# 测试用的临时构建（live.test.mjs 会造临时目录，正常在系统 temp 里，这里兜底）
+.tmp-*
+.check-*
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="分域代理">
+  <rect x="3" y="3" width="42" height="42" rx="11" fill="#2563eb"/>
+  <!-- 中间一条分界线：左边走本地，右边走代理 -->
+  <path d="M24 9v30" stroke="#ffffff" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.55"/>
+  <!-- 服务器 / 云 -->
+  <g fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 31h11"/>
+    <path d="M10 25h11"/>
+    <circle cx="18" cy="25" r="0.9" fill="#ffffff" stroke="none"/>
+    <circle cx="18" cy="31" r="0.9" fill="#ffffff" stroke="none"/>
+    <!-- 右边的箭头，指向外 -->
+    <path d="M31 24h7l-2.6-2.6M38 24l-2.6 2.6"/>
+    <path d="M31 31h7"/>
+  </g>
+</svg>

@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "分域代理（Clash 分流）",
+  "version": "1.0.0",
+  "description": "按域名决定走本地 Clash 还是直连：把指定站点送进代理，其余保持直连。",
+  "permissions": ["proxy", "storage", "<all_urls>", "tabs"],
+  "browser_action": {
+    "default_title": "分域代理",
+    "default_popup": "popup.html",
+    "default_icon": "icon.svg"
+  },
+  "background": { "scripts": ["bg.js"], "type": "module" },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": { "48": "icon.svg", "96": "icon.svg" },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "split-proxy@fxb.local",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  }
+}
