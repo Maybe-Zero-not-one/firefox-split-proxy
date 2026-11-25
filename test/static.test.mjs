@@ -140,6 +140,24 @@ for (const f of ['popup.html', 'options.html']) {
     ok(report.summary.warnings === 0, `web-ext lint 零 warning`, JSON.stringify((report.warnings||[]).map(w=>w.code).slice(0,5)));
   }
 }
+// ── 8. amo-check 脚本自身（它是上架后唯一会改文案的东西，得是好的）──
+// 踩过的两个坑都写在这里：拿别人的版本号拼文件名、release notes 的标题层级。
+{
+  const p = path.resolve(HERE, 'amo-check.mjs');
+  const src = await fs.readFile(p, 'utf8');
+  ok(src.includes('401') && src.includes('404'), 'amo-check 能区分 401（审核中）与 404（不存在）');
+  ok(src.includes('localVer'), 'amo-check 用本地 manifest 的版本号（不是 AMO 上那个包的）');
+  // 任何 `${ver}` 都是错的 —— 它来自 AMO 上那个包，会把别人的版本号写进我们的文件名
+  const badVer = [...src.matchAll(/\$\{ver\}/g)];
+  ok(badVer.length === 0, 'amo-check 里没有裸 ${ver}（会把别人的版本号写进自己文件名）', `${badVer.length} 处`);
+  ok(/\^\(\?#\{2,4\}\)/.test(src) || src.includes('#{2,4}'), 'amo-check 的 release notes 标题正则兼容 ### 安装');
+  ok(src.includes('FX_AMO_ROOT'), 'amo-check 支持改到副本上试跑（不误伤真文件）');
+
+  // 语法必须过 —— 它是个会被直接 node 起来的脚本
+  const chk = spawnSync(process.execPath, ['--check', p], { encoding: 'utf8' });
+  ok(chk.status === 0, 'amo-check 语法正确', chk.stderr?.slice(0, 200));
+}
+
 const failed = results.filter((r) => !r.pass);
 console.log(`\n静态检查 ${results.length} 条，${failed.length ? `❌ ${failed.length} 条失败` : '✅ 全过'}`);
 if (failed.length) process.exit(1);

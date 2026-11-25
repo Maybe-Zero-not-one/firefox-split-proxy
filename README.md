@@ -110,9 +110,27 @@ IP-CIDR,10.0.0.0/8          ← 按 IP 段（少见，本地分流一般用不�
 ```powershell
 cd fxvpn
 node test/match.test.mjs     # 48 条 · 规则引擎（纯函数，0.1 秒）
-node test/static.test.mjs    # 37 条 · manifest/语法/id 一致性/官方 lint（=AMO 那套）
+node test/static.test.mjs    # 43 条 · manifest/语法/id 一致性/官方 lint（=AMO 那套）
 node test/live.test.mjs      # 10 条 · 真 Firefox 装扩展 + 真分流验证（约 40 秒）
 node test/build.mjs          # 打包成 dist/*.xpi
+node test/build-source.mjs   # 打 AMO 的源码包 dist/*-source.zip
+```
+
+## AMO 上架状态检查
+
+```powershell
+# 查一次（401=审核中，404=slug 不存在，200+public=已上架）
+node test/amo-check.mjs 分域代理-clash-分流
+
+# 一直等到上架，每 5 分钟查一次
+node test/amo-check.mjs 分域代理-clash-分流 --watch
+
+# 上架后自动把 README 和 Release 说明换成商店链接
+node test/amo-check.mjs 分域代理-clash-分流 --apply
+```
+
+`--apply` 只改 `README.md` 和 `RELEASE-NOTES-<本地版本>.md` 两处，改完要自己看 `git diff` 再提交。
+想先试跑而不动真文件，用 `FX_AMO_ROOT=<副本目录>` 指向一份拷贝。
 ```
 
 `live.test.mjs` 用一次性 profile，跑完删掉，不碰你日常的 Firefox。
