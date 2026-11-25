@@ -1,0 +1,7 @@
+# 统一 LF：这些文件会进 xpi，混 CRLF 会让 AMO 的源码对比更难看
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.xpi binary
+*.zip binary
