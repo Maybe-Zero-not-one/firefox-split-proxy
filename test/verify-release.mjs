@@ -17,7 +17,12 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
 const FIREFOX = process.env.FX_BIN || 'D:\\Firefox\\firefox.exe';
-const XPI = path.resolve(process.argv[2] || path.join(ROOT, 'dist', 'split-proxy-1.0.0.xpi'));
+/**
+ * 默认路径从 manifest 版本推导，别写死 —— 写死就会像刚才那样，
+ * manifest 提到 1.0.1 了这里还指着 1.0.0.xpi，一跑就 ENOENT。
+ */
+const VER = JSON.parse(await fs.readFile(path.join(ROOT, 'src', 'manifest.json'), 'utf8')).version;
+const XPI = path.resolve(process.argv[2] || path.join(ROOT, 'dist', `split-proxy-${VER}.xpi`));
 
 const freePort = () => new Promise((res) => {
   const s = net.createServer();
