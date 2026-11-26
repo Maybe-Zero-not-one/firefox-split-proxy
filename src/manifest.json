@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "分域代理（Clash 分流）",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "按域名决定走本地 Clash 还是直连：把指定站点送进代理，其余保持直连。",
   "permissions": ["proxy", "storage", "<all_urls>", "tabs"],
   "browser_action": {

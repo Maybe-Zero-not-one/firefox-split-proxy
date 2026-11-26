@@ -161,6 +161,26 @@ for (const f of ['popup.html', 'options.html']) {
   ok(chk.status === 0, 'amo-check 语法正确', chk.stderr?.slice(0, 200));
 }
 
+// ── 6. 文档里写的包名必须与 manifest 版本一致 ────────────────────
+// 提版本时最容易漏这个：manifest 改成 1.0.1，README 里还写着 1.0.0.xpi，
+// 用户照着下载会 404。当初改 AMO 那轮就差点漏掉。
+{
+  const ver = mf.version;
+  // read() 是相对 src/ 的，这里要读仓库根的文档
+  const ROOT = path.resolve(SRC, '..');
+  const text = await fs.readFile(path.join(ROOT, 'README.md'), 'utf8');
+  const mentioned = new Set([...text.matchAll(/split-proxy-(\d+\.\d+\.\d+)\.xpi/g)].map((m) => m[1]));
+  ok(mentioned.size === 0 || (mentioned.size === 1 && mentioned.has(ver)),
+    `README 里提到的包版本与 manifest 一致（${ver}）`,
+    `manifest 是 ${ver}，README 里写的是 ${[...mentioned].join(', ')}`);
+  // design/ 里的草稿必须留着，否则后人不知道为什么长这样
+  const drafts = ['icon-draft1.svg', 'icon-draft2.svg', 'icon-draft3.svg', 'icon-draft4.svg'];
+  for (const d of drafts) {
+    const there = await fs.stat(path.join(ROOT, 'design', d)).then(() => true).catch(() => false);
+    ok(there, `设计草稿留档：design/${d}`);
+  }
+}
+
 const failed = results.filter((r) => !r.pass);
 console.log(`\n静态检查 ${results.length} 条，${failed.length ? `❌ ${failed.length} 条失败` : '✅ 全过'}`);
 if (failed.length) process.exit(1);

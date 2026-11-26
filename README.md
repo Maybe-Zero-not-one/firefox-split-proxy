@@ -4,7 +4,7 @@ Firefox 扩展。规则内的站点走本地 Clash，其余保持直连。**只�
 
 仓库：<https://github.com/Maybe-Zero-not-one/firefox-split-proxy>（MIT）
 
-**下载**：到 [Releases](https://github.com/Maybe-Zero-not-one/firefox-split-proxy/releases/latest) 取 `split-proxy-1.0.0.xpi`，安装方式见那页说明。
+**下载**：到 [Releases](https://github.com/Maybe-Zero-not-one/firefox-split-proxy/releases/latest) 取 `split-proxy-1.0.1.xpi`，安装方式见那页说明。
 
 ```
                     ┌─ 规则内（github.com …）→ 127.0.0.1:7897 (Clash) → 出口 211.20.x.x
@@ -59,7 +59,7 @@ about:debugging#/runtime/this-firefox
 ### 方式 B：装 xpi 并允许未签名（长期用）
 
 1. `about:config` → `xpinstall.signatures.required` 设为 `false`
-2. `about:addons` → 右上齿轮 → 从文件安装附加组件 → 选 `fxvpn/dist/split-proxy-1.0.0.xpi`
+2. `about:addons` → 右上齿轮 → 从文件安装附加组件 → 选 `fxvpn/dist/split-proxy-1.0.1.xpi`
 
 > 你机器上 `D:\Firefox` 可写（当前用户不是管理员但目录权限允许），
 > 所以也可以走企业策略法（`distribution/policies.json` 里 `ExtensionSettings` 白名单），
@@ -146,7 +146,7 @@ src/
   popup.html/js   工具栏弹窗：总开关、出口测试、最近走过的域
   options.html/js 规则编辑
 dist/
-  split-proxy-1.0.0.xpi
+  split-proxy-1.0.1.xpi
 test/
   match.test.mjs  48 条
   static.test.mjs 37 条

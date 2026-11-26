@@ -135,7 +135,12 @@ Permissions used, and only these:
 Build: none. The submitted package is the exact source in the repo; no transpiling,
 no bundling, no generated files. Source is therefore not required, but it is
 available at https://github.com/Maybe-Zero-not-one/firefox-split-proxy
-(public repository; the submitted package is byte-identical to src/ in it).
+(public repository).
+
+To check it, use tag v1.0.0 — that tree's src/ is byte-identical to the submitted
+package (same 8 files, same SHA-256). The `main` branch has since moved on: it
+carries an icon update (multi-size PNGs) planned for 1.0.1, which is not part of
+what you are reviewing.
 ```
 
 ## Source code submission（如果表单那步选了「是」）
@@ -143,8 +148,13 @@ available at https://github.com/Maybe-Zero-not-one/firefox-split-proxy
 严格按 AMO 那页的判定标准（"代码生成或压缩工具 / webpack 等合并工具 / Web 模板引擎 /
 任何二次处理"），本扩展**都没用过**，正确答案是**选「否」**：
 
-- 提交的 `.xpi` 里 8 个文件与仓库 `src/` 的 8 个文件 **SHA-256 逐一相同**
+- 提交的 `.xpi` 里 8 个文件与 **tag `v1.0.0`** 的 `src/` 8 个文件 **SHA-256 逐一相同**
 - 没有转译、没有拼接、没有压缩、没有代码生成
+
+> ⚠️ 核对时请用 tag `v1.0.0`，不要用 `main`。`main` 已经往前走了一步：
+> 图标换成六档 PNG（`src/icons/`），那是为 1.0.1 准备的，不属于本次审核范围。
+> `main` 上除了图标相关（`icon.svg` / `manifest.json` 的 `icons` 段 / 新增的 6 个 PNG），
+> 其余 6 个源文件与 v1.0.0 字节数完全相同。
 
 如果已经选了「是」并把上传框展开了，就传这个文件：
 
