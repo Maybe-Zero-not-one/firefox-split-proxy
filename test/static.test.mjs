@@ -50,13 +50,16 @@ for (const f of files) {
   ok(exists, `文件存在：${f}`);
 }
 // manifest 里点到的每个文件都要真的存在
+// 注意 icons / default_icon 有两形态：字符串，或 { "16": "a.png", ... } 尺寸表。
+// 后者直接展开出来（踩过：只处理字符串会让 path.join 收到对象而崩）。
+const iconPaths = (v) => (typeof v === 'string' ? [v] : Object.values(v || {}));
 const referenced = [
   ...(mf.background?.scripts || []),
   mf.browser_action?.default_popup,
-  mf.browser_action?.default_icon,
+  ...iconPaths(mf.browser_action?.default_icon),
   mf.options_ui?.page,
-  ...Object.values(mf.icons || {}),
-].filter(Boolean);
+  ...iconPaths(mf.icons),
+].filter((v) => typeof v === 'string' && v);
 for (const f of new Set(referenced)) {
   const exists = await fs.stat(path.join(SRC, f)).then(() => true).catch(() => false);
   ok(exists, `manifest 引用的 ${f} 存在`);

@@ -16,6 +16,7 @@
  */
 import { spawn } from 'node:child_process';
 import net from 'node:net';
+import http from 'node:http';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -54,6 +55,40 @@ async function buildVariant(patch, { id }) {
   }
   await fs.writeFile(bgPath, bg);
   return dir;
+}
+
+/**
+ * 假代理：记录收到的请求，一律 502。
+ *
+ * 为什么需要它 —— 这条踩了很久：
+ * 直觉上「把代理指到死端口，规则内的站就该打不开」。实测不是这样。
+ * Firefox 160.0.1 三组对照（port 1 / 7898 / 7897，同一个 github URL）：
+ *    port=1     打开 25.2s
+ *    port=7898  打开 22.2s
+ *    port=7897  打开 14.3s
+ * 代理连不上时 Firefox 会**回退直连**，死端口只是变慢，不会失败。
+ * 连 proxyHost 写成 no-such-proxy.invalid 也照样打开（15.3s）。
+ * （greprefs 里只有 network.proxy.failover_timeout: 1800，没有 failover_direct 这个 pref。）
+ *
+ * 所以「失败」不能当判据，只能看「代理端有没有收到流量」。
+ * 用一个会记账的本地假代理：收到 CONNECT github.com:443 → 分流确实生效。
+ * 而且这时导航会在 60ms 左右就失败（502 立刻回来，不用等超时），比等 20 秒快得多。
+ */
+function startFakeProxy() {
+  const hits = [];
+  const server = http.createServer((req, res) => {
+    hits.push({ method: req.method, url: req.url });
+    res.writeHead(502, { 'content-type': 'text/plain' });
+    res.end('fake proxy');
+  });
+  server.on('connect', (req, socket) => {
+    hits.push({ method: 'CONNECT', url: req.url });
+    socket.write('HTTP/1.1 502 Bad Gateway\r\n\r\n');
+    socket.destroy();
+  });
+  return new Promise((res) => {
+    server.listen(0, '127.0.0.1', () => res({ server, hits, port: server.address().port }));
+  });
 }
 
 const results = [];
@@ -110,8 +145,16 @@ async function withBrowser(fn) {
   }
 }
 
-/** 导航并返回 { ok, ms, error } */
-async function nav(call, ctx, url, timeoutMs = 15000) {
+/**
+ * 导航并返回 { ok, ms, error }
+ *
+ * 默认超时给到 45 秒而不是 15 秒：这条链是「页面 → 本地 Clash → 境外节点」，
+ * 节点慢的时候 github.com 单次就要 7–8 秒（实测），加上子资源很容易顶穿 15 秒。
+ * 那种失败测的是「此刻节点快不快」，不是「分流对不对」——会把自己骗成代码坏了。
+ * 想收紧就设 FX_NAV_TIMEOUT=15000。
+ */
+const NAV_TIMEOUT = Number(process.env.FX_NAV_TIMEOUT || 45000);
+async function nav(call, ctx, url, timeoutMs = NAV_TIMEOUT) {
   const t0 = Date.now();
   try {
     await call('browsingContext.navigate', { context: ctx, url, wait: 'complete' }, timeoutMs);
@@ -152,9 +195,10 @@ await withBrowser(async ({ call, ctx, logs, profile }) => {
   if (extId) { try { await call('webExtension.uninstall', { extension: extId }); } catch { /* 已卸 */ } }
 });
 
-console.log('\n── 第二轮：把代理指到死端口（证明分流真的在起作用）──');
+console.log('\n── 第二轮：把代理指到「会记账的假代理」（证明请求真的进了代理）──');
+const fake = await startFakeProxy();
 const deadId = 'split-proxy-dead@fxb.local';
-const deadDir = await buildVariant({ proxyPort: 1 }, { id: deadId });
+const deadDir = await buildVariant({ proxyPort: fake.port }, { id: deadId });
 try {
   await withBrowser(async ({ call, ctx }) => {
     let extId = null;
@@ -166,17 +210,25 @@ try {
     }
     await new Promise((r) => setTimeout(r, 2500));
 
-    const stamp = Date.now();
-    // 规则内 → 走 127.0.0.1:1 → 必挂
-    const gh = await nav(call, ctx, `https://github.com/?_=${stamp}`);
-    ok(!gh.ok, `规则内的 github.com 被送进死端口 → 按预期失败（${gh.ms}ms）`, gh.ok ? '本该失败却成功了' : '');
-    // 规则外 → 直连 → 应该正常
-    const bd = await nav(call, ctx, `https://www.baidu.com/?_=${stamp}`);
-    ok(bd.ok, `规则外的 baidu.com 照常直连打开（${bd.ms}ms）`, bd.error);
+    const one = await nav(call, ctx, `https://github.com/?_=${Date.now()}`);
+    const ghHits = fake.hits.filter((h) => String(h.url).includes('github'));
+    ok(ghHits.length > 0,
+      `假代理收到了 github 的请求（${ghHits.map((h) => `${h.method} ${h.url}`).slice(0, 2).join(', ')}）`,
+      `假代理一个 github 请求都没收到（共收到 ${fake.hits.length} 个）—— 分流没生效`);
+    // 502 立刻回来，所以导航应当很快失败；这里只断言「确实没走通」
+    ok(!one.ok, `被假代理挡下 → 页面打不开（${one.ms}ms）`, `居然打开成功了（${one.ms}ms）`);
+
+    const two = await nav(call, ctx, `https://www.baidu.com/?_=${Date.now()}`);
+    const bdHits = fake.hits.filter((h) => String(h.url).includes('baidu'));
+    ok(two.ok, `规则外的 baidu.com 直连打开（${two.ms}ms）`, two.error);
+    ok(bdHits.length === 0,
+      `baidu 没被送进代理（假代理收到 ${bdHits.length} 个 baidu 请求）`,
+      `baidu 也被送进代理了（${bdHits.length} 个）—— 规则外不该走代理`);
 
     if (extId) { try { await call('webExtension.uninstall', { extension: extId }); } catch { /* 已卸 */ } }
   });
 } finally {
+  try { fake.server.close(); } catch { /* 已关 */ }
   await fs.rm(deadDir, { recursive: true, force: true }).catch(() => {});
 }
 

@@ -7,14 +7,25 @@
   "browser_action": {
     "default_title": "分域代理",
     "default_popup": "popup.html",
-    "default_icon": "icon.svg"
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
   },
   "background": { "scripts": ["bg.js"], "type": "module" },
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
   },
-  "icons": { "48": "icon.svg", "96": "icon.svg" },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "64": "icons/icon-64.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
+  },
   "browser_specific_settings": {
     "gecko": {
       "id": "split-proxy@fxb.local",

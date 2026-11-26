@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="分域代理">
+  <defs>
+    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#1e40af"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="url(#g3)"/>
+
+  <!-- 一个圆环被切成两半：左半实、右半虚，象征"一部分流量出去，一部分留下" -->
+  <circle cx="24" cy="24" r="12.5" fill="none" stroke="#ffffff" stroke-width="3.6"
+          stroke-linecap="round" stroke-dasharray="39.3 39.3" transform="rotate(-90 24 24)"/>
+  <circle cx="24" cy="24" r="12.5" fill="none" stroke="#ffffff" stroke-width="3.6"
+          stroke-linecap="round" stroke-dasharray="39.3 39.3" opacity="0.38"
+          transform="rotate(90 24 24)"/>
+
+  <!-- 中心向外的箭头：说明"一个入口，两种去向" -->
+  <path d="M24 24l7.5-7.5" stroke="#ffffff" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M26.5 16.5H31.5V21.5" fill="none" stroke="#ffffff" stroke-width="3.4"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

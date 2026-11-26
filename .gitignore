@@ -2,6 +2,11 @@
 node_modules/
 dist/
 
+# 图标设计过程的中间产物（对比图/截图，几百 KB，不该进仓库）
+# 最终产物是 src/icons/icon-*.png + src/icon.svg，这两个要提交
+design/*.png
+design/*.html
+
 # 测试用的临时构建（live.test.mjs 会造临时目录，正常在系统 temp 里，这里兜底）
 .tmp-*
 .check-*

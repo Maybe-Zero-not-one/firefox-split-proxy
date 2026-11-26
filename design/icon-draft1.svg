@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="分域代理">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="48" height="48" rx="11" fill="url(#bg)"/>
+
+  <!-- 一条请求进来 -->
+  <circle cx="12.5" cy="24" r="2.9" fill="#ffffff"/>
+  <path d="M15.4 24H22.5" stroke="#ffffff" stroke-width="2.9" stroke-linecap="round"/>
+
+  <!-- 分成两股：上 → 出境，下 → 本地 -->
+  <path d="M22.5 24C27 24 27 15.5 31.5 15.5H34"
+        fill="none" stroke="#ffffff" stroke-width="2.9"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22.5 24C27 24 27 32.5 31.5 32.5H34"
+        fill="none" stroke="#ffffff" stroke-width="2.9"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 两个不同的去处：上面是空心环（外部），下面是实心点（本地） -->
+  <circle cx="37.2" cy="15.5" r="3.1" fill="none" stroke="#ffffff" stroke-width="2.6"/>
+  <circle cx="37.2" cy="32.5" r="2.4" fill="#ffffff"/>
+</svg>

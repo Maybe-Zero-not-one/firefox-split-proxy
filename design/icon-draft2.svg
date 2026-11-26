@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="分域代理">
+  <defs>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="url(#g2)"/>
+
+  <!-- 直行：一条实线箭头（本地） -->
+  <path d="M9 31h24" fill="none" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M29.5 26.2L35 31l-5.5 4.8" fill="none" stroke="#ffffff" stroke-width="3.6"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 绕行：上方一条弧线箭头（出境），用窄一点的线区分 -->
+  <path d="M9 17h13c6.5 0 6.5-6 13-6" fill="none" stroke="#ffffff" stroke-width="3.6"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+  <path d="M30.5 15.6L36 11l-1.2 6.6" fill="none" stroke="#ffffff" stroke-width="3.6"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+</svg>
